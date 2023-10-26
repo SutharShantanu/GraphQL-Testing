@@ -1,8 +1,15 @@
-const express = require('express');
-const app = require('./src/server');
+const { ApolloServer } = require('apollo-server');
+const fs = require('fs');
+const path = require('path');
 
-const PORT = process.env.PORT || 4000;
+// Load the schema and resolvers
+const schemaPath = path.join(__dirname, 'src', 'schema', 'schema.graphql');
+const typeDefs = fs.readFileSync(schemaPath, 'utf8');
+const resolvers = require('./src/resolvers/resolvers');
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}/graphql`);
+// Create and start the Apollo Server
+const server = new ApolloServer({ typeDefs, resolvers });
+
+server.listen().then(({ url }) => {
+  console.log(`Server is running at ${url}`);
 });
